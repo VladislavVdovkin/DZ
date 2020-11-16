@@ -1,0 +1,199 @@
+#Создаем нашу виртуальную машину в дирректории c Vagrantfile и подключается к ней
+vagrant up
+vagrant ssh
+
+#Дальнейшие действия буду выполнять из под root
+sudo -i
+
+#Устанавливаем пакет xvfdump для дальнейшего снятия копии с / тома.
+yum install xfsdump
+
+#Готовим временный том для / раздела
+pvcreate /dev/sdb
+vgcreate vg_root /dev/sdb
+lvcreate -n lv_root -l +100%FREE /dev/vg_root
+
+#Создаем файловую систему на томе подготовленном выше
+mkfs.xfs /dev/vg_root/lv_root
+
+#Монтируем том
+mount /dev/vg_root/lv_root /mnt
+
+#Копируем все данные с / раздела в /mnt
+xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
+
+#Переконфигурируем grub для перехода в новый / при старте, 
+#Сымитируем текущий root -> сделаем в него chroot и обновим grub:
+for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+chroot /mnt/
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+#Обновим образ initrd
+cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g;
+s/.img//g"` --force; done
+
+#Для того что бы загрузился нужный root правим файл /boot/grub2/grub.cfg
+#Находим строку rd.lvm.lv=VolGroup00/LogVol00 и правим её на rd.lvm.lv=vg_root/lv_root
+vi /boot/grub2/grub.cfg
+i - правим, после ESC
+:wq 
+
+#Перезагружаем систему
+Ctrl+D для выхода из пользователя root
+sudo reboot
+
+#После успешной перезагрузки подключаемся к виртуальной машине
+vagrant ssh
+
+#Проверяем что система загрузилась с новым root томом
+lsblk
+
+#Дальнейшие действия буду выполнять из под root
+sudo -i
+
+#Удаляем старый LV на 40gb 
+lvremove /dev/VolGroup00/LogVol00
+
+#Создаем новый LV на 8gb
+lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+
+#Создаем файловую систему на томе созданом выше
+mkfs.xfs /dev/VolGroup00/LogVol00
+
+#Монтируем том
+mount /dev/VolGroup00/LogVol00 /mnt
+
+#Копируем все данные с / раздела в /mnt
+xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
+
+#Переконфигурируем grub (как делали выше)
+for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+chroot /mnt/
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+#Обновим образ initrd
+cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g;
+s/.img//g"` --force; done
+
+#Не выходя из chroot и не перезагружаясь выделим том под /var
+#Подготавливаем свободные диски и создаем зеркало
+
+pvcreate /dev/sdc /dev/sdd
+vgcreate vg_var /dev/sdc /dev/sdd
+lvcreate -L 950M -m1 -n lv_var vg_var
+
+#Создаем на нем файловую систему и перемещаем туда /var
+mkfs.ext4 /dev/vg_var/lv_var
+mount /dev/vg_var/lv_var /mnt
+cp -aR /var/* /mnt/ # rsync -avHPSAX /var/ /mnt/
+
+#На всякий случай сохраняем данные старого /var
+mkdir /tmp/oldvar && mv /var/* /tmp/oldvar
+
+#Монтируем новýй var в каталог /var
+umount /mnt
+mount /dev/vg_var/lv_var /var
+
+#Правим fstab для автоматического монтирование /var
+echo "`blkid | grep var: | awk '{print $2}'` /var ext4 defaults 0 0" >> /etc/fstab
+
+#Перезагружаем систему
+Ctrl+D для выхода из пользователя root
+sudo reboot
+
+#После успешной перезагрузки подключаемся к виртуальной машине
+vagrant ssh
+
+#Проверяем что система загрузилась с новым root томом на 8gb
+lsblk
+
+#Дальнейшие действия буду выполнять из под root
+sudo -i
+
+#Удаляем временную Volume Group
+lvremove /dev/vg_root/lv_root
+vgremove /dev/vg_root
+pvremove /dev/sdb
+
+#Выделяем том под /home
+lvcreate -n LogVol_Home -L 2G /dev/VolGroup00
+
+Создаем на нем файловую систему и перемещаем туда /home
+mkfs.xfs /dev/VolGroup00/LogVol_Home
+mount /dev/VolGroup00/LogVol_Home /mnt/
+cp -aR /home/* /mnt/
+rm -rf /home/*
+umount /mnt
+mount /dev/VolGroup00/LogVol_Home /home/
+
+#Правим fstab для автоматического монтирование /home
+echo "`blkid | grep Home | awk '{print $2}'` /home xfs defaults 0 0" >> /etc/fstab
+
+#Сделаем том для снапшотов
+#Сгенерируем файлы в home
+touch /home/file{1..20}
+
+#Проверим сгенерировались ли файлы
+ls /home/
+ 
+#Снимаем снапшот
+lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
+
+#Удаляем часть файлов в /home и убедимся в этом
+rm -f /home/file{11..20}
+ls /home/
+
+#Восстанавливаем /home со снапшота
+umount /home
+lvconvert --merge /dev/VolGroup00/home_snap
+mount /home
+
+#Проверим восстановились ли файлы
+ls /home/
+
+#Проверим прописалось ли монтирование в fstab (Должны увидеть /home и /var с разными файловыми системами)
+cat /etc/fstab
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -100,14 +100,16 @@
 3. Добавить модуль в initrd
 
 	#Все действия будем выполнять из под root
-			sudo -i
-
-	# Скрипты модулей находятся в каталоге /usr/lib/dracut/modules.d/
 	
-	# Для добавления своего модуля создаем папку 01test
+			sudo -i
+	
+	#Скрипты модулей находятся в каталоге /usr/lib/dracut/modules.d/
+	
+	#Для добавления своего модуля создаем папку 01test
 			mkdir /usr/lib/dracut/modules.d/01test
 
-	# В созданой папке создаем скрипт vi /usr/lib/dracut/modules.d/01test/module-setup.sh
+	#В созданой папке создаем скрипт vi /usr/lib/dracut/modules.d/01test/module-setup.sh
+			
 			#!/bin/bash
 
 			check() {
@@ -123,7 +125,7 @@
 			}
 
 
-	# В созданой папке создаем скрипт vi /usr/lib/dracut/modules.d/01test/test.sh
+	#В созданой папке создаем скрипт vi /usr/lib/dracut/modules.d/01test/test.sh
 
 			#!/bin/bash
 			
@@ -146,19 +148,19 @@
              sleep 10
              echo " continuing...."
 
-	# Делаем созданые скрипты исполняемыми
+	#Делаем созданые скрипты исполняемыми
 			chmod +x /usr/lib/dracut/modules.d/01test/module-setup.sh
 			chmod +x /usr/lib/dracut/modules.d/01test/test.sh
 
-	# Пересобираем образ initrd
+	#Пересобираем образ initrd
 			dracut -f -v
 
-	# Редактируем grub.cfg
+	#Редактируем grub.cfg
 			vi /boot/grub2/grub.cfg
 
-	# С строке linux16 убираем параметры rghb и quiet
+	#С строке linux16 убираем параметры rghb и quiet
 
-	# Перезагружаем 
+	#Перезагружаем 
 			reboot
 
 

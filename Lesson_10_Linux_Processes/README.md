@@ -1,4 +1,5 @@
 #Скачиваем Vagrantfile и подключаемся к нему
+	
 	vagrant up
 	vagrant ssh
 
@@ -6,6 +7,7 @@
 #taskone.sh - реализация ps ax через /proc
 #taskfive.sh - запуск двух процессов с разными nice
 #Вывод taskfive
+	
 	1048576+0 records in
 	1048576+0 records out
 	2097152000 bytes (2.1 GB) copied, 58.9125 s, 35.6 MB/s

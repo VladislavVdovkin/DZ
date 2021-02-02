@@ -1,0 +1,84 @@
+    1  touch /etc/sysconfig/watchlog
+    2  yum install nano
+    3  vi /etc/sysconfig/watchlog
+    4  touch /var/log/watchlog.log
+    5  vi /var/log/watchlog.log
+    6  touch /opt/watchlog.sh
+    7  vi /opt/watchlog.sh
+    8  nano /etc/systemd/system/watchlog.service
+    9  nano /etc/systemd/system/watchlog.timer
+   10  systemctl enable watchlog.timer
+   11  systemctl start watchlog.timer
+   12  nano /etc/systemd/system/watchlog.timer
+   13  systemctl start watchlog.timer
+   14  nano /etc/systemd/system/watchlog.service
+   15  systemctl start watchlog.timer
+   16  systemctl status watchlog.timer
+   17  systemctl daemon-reload
+   18  systemctl start watchlog.timer
+   19  systemctl status watchlog.timer
+   20  tail -f /var/log/messages
+   21  nano /opt/watchlog.sh
+   22  chmod +x /opt/watchlog.sh
+   23  systemctl stop watchlog.timer
+   24  systemctl status watchlog.timer
+   25  systemctl start watchlog.timer
+   26  tail -f /var/log/messages
+   27  nano /opt/watchlog.sh
+   28  systemctl stop watchlog.timer
+   29  systemctl start watchlog.timer
+   30  tail -f /var/log/messages
+   31  yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
+   32  nano /etc/sysconfig/spawn-fcgi
+   33  nano /etc/systemd/system/spawn-fcgi.service
+   34  systemctl start spawn-fcgi.service
+   35  systemctl status spawn-fcgi.service
+   36  ls -l /usr/lib/systemd/system
+   37  cp /usr/lib/systemd/system/httpd.service /etc/systemd/system
+   38  mv /etc/systemd/system/httpd.service /etc/systemd/system/httpd@.service
+   39  nano /etc/systemd/system/httpd@.service
+   40  cd /etc/sysconfig/
+   41  ls
+   42  ls -l
+   43  cat httpd
+   44  ls -l httpd
+   45  nano httpd
+   46  cd /etc/httpd/conf
+   47  ls
+   48  nano httpd.conf
+   49  touch first.conf
+   50  touch second.conf
+   51  nano httpd.conf
+   52  rm first.conf
+   53  rm second.conf
+   54  scp httpd.conf first.conf
+   55  ls
+   56  cat first.conf
+   57  scp httpd.conf second.conf
+   58  ls -l
+   59  nano second.conf
+   60  cd /etc/sysconfig/
+   61  ls
+   62  ls -l
+   63  cat httpd
+   64  scp httpd httpd-first
+   65  scp httpd httpd-second
+   66  nano httpd-first
+   67  nano httpd-second
+   68  systemctl start httpd@first.service
+   69  systemctl start httpd@second.service
+   70  systemctl status httpd@first.service
+   71  ss -tnlp
+   72  nano /etc/httpd/conf/second.conf
+   73  systemctl start httpd@second.service
+   74  systemctl status httpd@second.service
+   75  systemctl stop httpd@first.service
+   76  systemctl stop httpd@second.service
+   77  ss -tnlp
+   78  systemctl start httpd@first.service
+   79  systemctl status httpd@first.service
+   80  ss -tnlp
+   81  systemctl start httpd@second.service
+   82  ss -tnlp
+   83  systemctl status httpd@second.service
+   84  history

@@ -1,0 +1,203 @@
+---
+- name: web | Install and configure web server
+  hosts: web
+  become: true
+
+  tasks:
+    - name: Install EPEL Repo package from standart repo
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Add elastic repository
+      copy:
+        src: lognginx/elasticsearch.repo
+        dest: /etc/yum.repos.d/elasticsearch.repo
+
+    - name: Install packages
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - nginx
+          - rsyslog
+          - filebeat
+      notify:
+        - restart nginx
+
+    - name: Copy rsyslog config
+      copy:
+        src: web/all.conf
+        dest: /etc/rsyslog.d/all.conf
+      notify:
+        - restart rsyslog
+
+    - name: Copy filebeat config
+      copy:
+        src: web/filebeat.yml
+        dest: /etc/filebeat/filebeat.yml
+      notify:
+        - restart filebeat
+   
+  handlers:
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+    - name: restart rsyslog
+      systemd:
+        name: rsyslog
+        state: restarted
+        enabled: yes
+    
+    - name: restart filebeat
+      systemd:
+        name: filebeat
+        state: restarted
+        enabled: yes
+
+
+
+- name: log | Install and configure rsyslog
+  hosts: log
+  become: true
+
+  tasks:
+    - name: Install packages
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - rsyslog
+          - policycoreutils-python
+
+    - name: Allow rsyslog to listen on 514 tcp ports
+      seport:
+        ports: 514
+        proto: tcp
+        setype: syslogd_port_t
+        state: present
+
+    - name: Allow rsyslog to listen on 512 tcp ports
+      seport:
+        ports: 512
+        proto: tcp
+        setype: syslogd_port_t
+        state: present
+
+    - name: Allow rsyslog to listen on 514 udp ports
+      seport:
+        ports: 514
+        proto: udp
+        setype: syslogd_port_t
+        state: present
+
+    - name: Allow rsyslog to listen on 512 udp ports
+      seport:
+        ports: 512
+        proto: udp
+        setype: syslogd_port_t
+        state: present
+
+    - name: Copy rsyslog config
+      copy:
+        src: log/rsyslog.conf
+        dest: /etc/rsyslog.conf
+      notify:
+        - restart rsyslog
+        
+  handlers:
+    - name: restart rsyslog
+      systemd:
+        name: rsyslog
+        state: restarted
+        enabled: yes
+
+
+
+
+- name: lognginx | Install and configure nginx log server
+  hosts: lognginx
+  become: true
+      
+  tasks:
+    - name: Add elastic repository
+      copy:
+        src: lognginx/elasticsearch.repo
+        dest: /etc/yum.repos.d/elasticsearch.repo
+
+    - name: Install EPEL Repo package from standart repo
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Install packages
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - nginx
+          - java-1.8.0-openjdk
+          - httpd-tools
+          - elasticsearch
+          - kibana
+          - logstash
+
+    - name: Copy elasticsearch config
+      copy:
+        src: lognginx/elasticsearch.yml
+        dest: /etc/elasticsearch/elasticsearch.yml
+      notify:
+        - restart elasticsearch
+
+    - name: Copy kibana config
+      copy:
+        src: lognginx/kibana.yml
+        dest: /etc/kibana/kibana.yml
+      notify:
+        - restart kibana
+
+    - name: Copy nginx config
+      copy:
+        src: lognginx/192.168.11.152.conf
+        dest: /etc/nginx/conf.d/192.168.11.152.conf
+      notify:
+        - restart nginx
+
+    - name: Copy logstash output config
+      copy:
+        src: lognginx/logstash-nginx-es.conf
+        dest: /etc/logstash/conf.d/logstash-nginx-es.conf
+      notify:
+        - restart logstash
+
+  handlers:
+    - name: restart elasticsearch
+      systemd:
+        name: elasticsearch
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
+      
+    - name: restart kibana
+      systemd:
+        name: kibana
+        state: restarted
+        enabled: yes
+      
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: yes    
+
+    - name: restart logstash
+      systemd:
+        name: logstash
+        state: restarted
+        enabled: yes  

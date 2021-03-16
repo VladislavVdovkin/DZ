@@ -1,0 +1,5 @@
+127.0.0.1 - - [10/Dec/2020:10:21:04 +0000] "GET /repo/ HTTP/1.1" 200 546 "-" "curl/7.61.1" "-"
+127.0.0.1 - - [10/Dec/2020:10:32:36 +0000] "GET /repo/repodata/repomd.xml HTTP/1.1" 200 3074 "-" "libdnf (CentOS Linux 8; generic; Linux.x86_64)" "-"
+127.0.0.1 - - [10/Dec/2020:10:32:36 +0000] "GET /repo/repodata/750d383e9c346a51c6e4dfdaa67726f26bf513ce849d7e11c327366f98bd7625-primary.xml.gz HTTP/1.1" 200 1396 "-" "libdnf (CentOS Linux 8; generic; Linux.x86_64)" "-"
+127.0.0.1 - - [10/Dec/2020:10:32:36 +0000] "GET /repo/repodata/197c298645dea855c46e152763ce3b3d9c6c3187c33ef9b65d2f68e7672168e4-filelists.xml.gz HTTP/1.1" 200 777 "-" "libdnf (CentOS Linux 8; generic; Linux.x86_64)" "-"
+127.0.0.1 - - [10/Dec/2020:10:35:15 +0000] "GET /repo/percona-release-1.0-9.noarch.rpm HTTP/1.1" 200 16664 "-" "libdnf (CentOS Linux 8; generic; Linux.x86_64)" "-"

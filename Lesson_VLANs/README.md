@@ -8,7 +8,7 @@ Vagrantfile для задания: [Vagrantfile](./Vagrantfile)
 
             testClient2 <-> testServer2
 
-#В общую сеть были добавлены 4 хоста. Общая карта сети доступна [здесь](https://github.com/VladislavVdovkin/DZ/Lesson_VLANs/blob/master/full-map.png).
+#В общую сеть были добавлены 4 хоста. Общая карта сети доступна [здесь](https://github.com/VladislavVdovkin/DZ/blob/master/Lesson_VLANs/full-map.png).
 
 Схема для задания:
 <a href="https://github.com/VladislavVdovkin/DZ/Lesson_VLANs/blob/master/vlan.png" rel="Click!">![map](./vlan.png)</a>

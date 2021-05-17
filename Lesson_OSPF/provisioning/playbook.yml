@@ -1,0 +1,69 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: install packages
+    yum: name={{ item }} state=latest 
+    loop:
+      - quagga
+      - bind-utils
+      - mc
+      - nano
+      - tcpdump
+
+  - sysctl:
+      name: net.ipv4.ip_forward
+      value: '1'
+      sysctl_set: yes
+      state: present
+      reload: yes
+
+  - sysctl:
+      name: net.ipv4.conf.all.rp_filter
+      value: '2'
+      sysctl_set: yes
+      state: present
+      reload: yes
+
+
+- hosts: R1
+  become: yes
+  tasks:
+  - name: copy ospfd.conf
+    copy: src=r1.ospfd.conf dest=/etc/quagga/ospfd.conf owner=root group=root mode=0666 force=yes
+
+  - name: Restart service ospfd
+    service:
+     name: ospfd
+     state: restarted
+
+- hosts: R2
+  become: yes
+  tasks:
+  - name: copy ospfd.conf
+    copy: src=r2.ospfd.conf dest=/etc/quagga/ospfd.conf owner=root group=root mode=0666 force=yes
+
+  - name: copy zebra.conf
+    copy: src=zebra.conf dest=/etc/quagga/zebra.conf owner=root group=root mode=0666 force=yes
+
+  - name: Restart zebra.service
+    service:
+     name: zebra
+     state: restarted
+
+  - name: Restart service ospfd
+    service:
+     name: ospfd
+     state: restarted
+
+
+- hosts: R3
+  become: yes
+  tasks:
+  - name: copy ospfd.conf
+    copy: src=r3.ospfd.conf dest=/etc/quagga/ospfd.conf owner=root group=root mode=0666 force=yes
+
+  - name: Restart service ospfd
+    service:
+     name: ospfd
+     state: restarted

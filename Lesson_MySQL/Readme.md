@@ -25,25 +25,25 @@
 ```
 
 ### Как запустить:
-- git clone https://github.com/MaximMiklyaev/40.Mysql.git && cd 40.Mysql && vagrant up
+- Скачиваем репозиторий по ссылке и выполняем vagrant up
 
 ### Описание:
 
 1. После поднятия виртуальных машин, выполним операции на мастере:
 
-![Image 1](https://raw.githubusercontent.com/VladislavVdovkin/DZ/tree/master/Lesson_MySQL/screenshots/master.png)
+![Image 1](https://github.com/VladislavVdovkin/DZ/blob/master/Lesson_MySQL/screenshots/master.png)
 
-![Image 2](https://raw.githubusercontent.com/VladislavVdovkin/DZ/tree/master/Lesson_MySQL/screenshots/master2.png)
+![Image 2](https://github.com/VladislavVdovkin/DZ/blob/master/Lesson_MySQL/screenshots/master2.png)
 
 2. Посмотрим репликацию на slave:
 
-![Image 3](https://raw.githubusercontent.com/VladislavVdovkin/DZ/tree/master/Lesson_MySQL/screenshots/slave.png)
+![Image 3](https://github.com/VladislavVdovkin/DZ/blob/master/Lesson_MySQL/screenshots/slave.png)
 
-![Image 4](https://raw.githubusercontent.com/VladislavVdovkin/DZ/tree/master/Lesson_MySQL/screenshots/slave2.png)
+![Image 4](https://github.com/VladislavVdovkin/DZ/blob/master/Lesson_MySQL/screenshots/slave2.png)
 
 - Используем утилиту ```mysqlbinlog```:
 
-![Image 5](https://raw.githubusercontent.com/VladislavVdovkin/DZ/tree/master/Lesson_MySQL/screenshots/binlog.png)
+![Image 5](https://github.com/VladislavVdovkin/DZ/blob/master/Lesson_MySQL/screenshots/binlog.png)
 
 ### Как проверить:
 

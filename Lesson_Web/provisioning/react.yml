@@ -1,0 +1,7 @@
+- name: react
+  hosts: all
+  become: true
+
+  roles:
+   - react
+

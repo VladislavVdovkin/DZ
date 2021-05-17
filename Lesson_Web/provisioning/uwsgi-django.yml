@@ -1,0 +1,7 @@
+- name: uwsgi-django
+  hosts: all
+  become: true
+
+  roles:
+   - uwsgi-django
+

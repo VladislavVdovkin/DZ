@@ -1,0 +1,7 @@
+- name: laravel
+  hosts: all
+  become: true
+
+  roles:
+   - laravel
+

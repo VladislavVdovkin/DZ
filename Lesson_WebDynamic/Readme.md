@@ -22,8 +22,8 @@ vagrant стэнд с проброшенными на локалхост пор�
 ## В процессе сделано:
 Настроен Vagrantfile и плейбук ansible для развертки следующей конфигурации:
 - проект https://github.com/VladislavVdovkin/DZ/tree/master/django-helloworld-master c django висит на порту localhost:8000 и проксирутся nginx с порта 83
-- проект https://github.com/VladislavVdovkin/DZ/master/go-http-hello-world-master с go висит на порту localhost:8800 и проксирутся nginx с порта 81
-- проект https://github.com/VladislavVdovkin/DZ/master/react-helloworld-master с react висит на порту localhost:7777 и проксирутся nginx с порта 82
+- проект https://github.com/VladislavVdovkin/DZ/tree/master/go-http-hello-world-master с go висит на порту localhost:8800 и проксирутся nginx с порта 81
+- проект https://github.com/VladislavVdovkin/DZ/tree/master/react-helloworld-master с react висит на порту localhost:7777 и проксирутся nginx с порта 82
 
 
 1. GO
